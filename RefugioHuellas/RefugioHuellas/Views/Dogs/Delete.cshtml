@@ -1,0 +1,58 @@
+﻿@model RefugioHuellas.Models.Dog
+
+@{
+    ViewData["Title"] = "Eliminar perro";
+}
+
+<div class="page-title">
+    <div>
+        <h1>Eliminar perro</h1>
+        <p class="text-danger">¿Estás seguro de que deseas eliminar este registro del refugio?</p>
+    </div>
+</div>
+
+<div class="card card-section mb-4">
+    <div class="card-body">
+        <div class="row g-4">
+            <div class="col-md-4">
+                @if (!string.IsNullOrWhiteSpace(Model.PhotoUrl))
+                {
+                    <img src="@Model.PhotoUrl"
+                         alt="@Model.Name"
+                         class="img-fluid rounded border" />
+                }
+                else
+                {
+                    <div class="border rounded d-flex align-items-center justify-content-center"
+                         style="height:220px;">
+                        <span class="text-muted">Sin foto</span>
+                    </div>
+                }
+            </div>
+            <div class="col-md-8">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">Nombre</dt>
+                    <dd class="col-sm-9">@Model.Name</dd>
+
+                    <dt class="col-sm-3">Descripción</dt>
+                    <dd class="col-sm-9">@Model.Description</dd>
+
+                    <dt class="col-sm-3">Salud</dt>
+                    <dd class="col-sm-9">@Model.HealthStatus</dd>
+
+                    <dt class="col-sm-3">Esterilizado</dt>
+                    <dd class="col-sm-9">@(Model.Sterilized ? "Sí" : "No")</dd>
+
+                    <dt class="col-sm-3">Ingreso</dt>
+                    <dd class="col-sm-9">@Model.IntakeDate.ToLocalTime().ToString("g")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
+</form>

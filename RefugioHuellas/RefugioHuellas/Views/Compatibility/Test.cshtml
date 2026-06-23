@@ -1,0 +1,49 @@
+﻿@model RefugioHuellas.Models.ViewModels.CompatibilityFormVm
+@{
+    ViewData["Title"] = "Formulario de compatibilidad";
+}
+
+<div class="page-title">
+    <div>
+        <h1>Formulario de compatibilidad</h1>
+        <p>
+            Perro seleccionado: <strong>@Model.DogName</strong><br />
+            Responde estas preguntas para evaluar tu compatibilidad con este perrito.
+        </p>
+    </div>
+</div>
+
+<div class="card card-section">
+    <div class="card-body">
+        <form asp-action="Test" method="post">
+            <input type="hidden" asp-for="DogId" />
+            <input type="hidden" asp-for="DogName" />
+
+            @for (int i = 0; i < Model.Answers.Count; i++)
+            {
+                <div class="mb-3 p-3 border rounded bg-light">
+                    <p class="fw-semibold mb-2">@Model.Answers[i].Prompt</p>
+
+                    <input type="hidden" asp-for="Answers[@i].TraitId" />
+                    <input type="hidden" asp-for="Answers[@i].Key" />
+                    <input type="hidden" asp-for="Answers[@i].Prompt" />
+
+                    <select asp-for="Answers[@i].Value" class="form-select" style="max-width:260px">
+                        <option value="1">No</option>
+                        <option value="2">Rara vez</option>
+                        <option value="3">A veces</option>
+                        <option value="4">Casi siempre</option>
+                        <option value="5">Sí</option>
+                    </select>
+                </div>
+            }
+
+            <button class="btn btn-success">
+                Enviar solicitud
+            </button>
+            <a asp-controller="Dogs" asp-action="Details" asp-route-id="@Model.DogId" class="btn btn-outline-secondary ms-2">
+                Volver al perro
+            </a>
+        </form>
+    </div>
+</div>

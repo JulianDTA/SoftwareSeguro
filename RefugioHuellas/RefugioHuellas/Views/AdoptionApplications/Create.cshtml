@@ -1,0 +1,66 @@
+﻿@{
+    ViewData["Title"] = "Solicitar adopción";
+    var dogId = (int)ViewBag.DogId;
+}
+
+<div class="page-title">
+    <div>
+        <h1>Solicitar adopción</h1>
+        <p>Confirma que deseas enviar tu solicitud para este perrito.</p>
+    </div>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["AdoptOk"] != null)
+{
+    <div class="alert alert-success">@TempData["AdoptOk"]</div>
+}
+@if (TempData["Info"] != null)
+{
+    <div class="alert alert-info">@TempData["Info"]</div>
+}
+
+<div class="card card-section">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            <input type="hidden" name="dogId" value="@dogId" />
+
+            <!-- Resumen de validación del servidor -->
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <!-- Nombre -->
+            <div class="mb-3">
+                <label class="form-label" for="firstName">Nombre</label>
+                <input class="form-control" id="firstName" name="firstName"  />
+                @Html.ValidationMessage("firstName", null, new { @class = "text-danger" })
+            </div>
+
+            <!-- Apellido -->
+            <div class="mb-3">
+                <label class="form-label" for="lastName">Apellido</label>
+                <input class="form-control" id="lastName" name="lastName"  />
+                @Html.ValidationMessage("lastName", null, new { @class = "text-danger" })
+            </div>
+
+            <!-- Dato sensible: teléfono de contacto -->
+            <div class="mb-3">
+                <label class="form-label" for="phone">Teléfono de contacto</label>
+                <input class="form-control" id="phone" name="phone" placeholder="Ej: 09 91234567" />
+                @Html.ValidationMessage("phone", null, new { @class = "text-danger" })
+                <div class="form-text">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success">
+                Confirmar solicitud
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

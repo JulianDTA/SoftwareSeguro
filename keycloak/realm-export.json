@@ -1,0 +1,155 @@
+{
+  "realm": "proyecto-dss",
+  "displayName": "Proyecto DSS",
+  "enabled": true,
+  "sslRequired": "none",
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": false,
+  "clients": [
+    {
+      "clientId": "refugiohuellas",
+      "name": "RefugioHuellas (MVC)",
+      "description": "Cliente confidencial para el backend ASP.NET Core (OIDC flow con cookie)",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "tMlrEe9rqd0SCRkSGNlUIPVrUoEMNnav",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "fullScopeAllowed": true,
+      "redirectUris": [
+        "http://localhost:5000/*",
+        "http://localhost:5001/*",
+        "http://localhost:5114/*",
+        "http://localhost:7000/*",
+        "https://*.railway.app/*",
+        "https://*.up.railway.app/*"
+      ],
+      "webOrigins": ["+"],
+      "attributes": {}
+    },
+    {
+      "clientId": "refugiohuellas-react",
+      "name": "RefugioHuellas React SPA",
+      "description": "Cliente público PKCE para la SPA React embebida en RefugioHuellas",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "clientAuthenticatorType": "client-secret",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "fullScopeAllowed": true,
+      "redirectUris": [
+        "http://localhost:5173/*",
+        "http://localhost:5174/*",
+        "http://localhost:5175/*",
+        "http://localhost:5175/app",
+        "http://localhost:5175/app/",
+        "http://localhost:5175/app/*",
+        "http://localhost:5000/app",
+        "http://localhost:5000/app/",
+        "http://localhost:5000/app/*",
+        "http://localhost:5001/app",
+        "http://localhost:5001/app/",
+        "http://localhost:5001/app/*",
+        "https://*.railway.app/app/*",
+        "https://*.up.railway.app/app/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+        "http://localhost:5000",
+        "http://localhost:5001",
+        "+"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      }
+    },
+    {
+      "clientId": "veci-herramientas",
+      "name": "Veci-Herramientas (Vue + React)",
+      "description": "Cliente público PKCE para los frontends Vue y React de ProyectoWeb",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "clientAuthenticatorType": "client-secret",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "fullScopeAllowed": true,
+      "redirectUris": [
+        "http://localhost:5173/*",
+        "http://localhost:5174/*",
+        "http://localhost:5175/*",
+        "https://*.vercel.app/*",
+        "https://*.onrender.com/*",
+        "https://*.railway.app/*"
+      ],
+      "webOrigins": ["+"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      }
+    }
+  ],
+  "roles": {
+    "realm": [
+      { "name": "user",  "description": "Usuario estándar",  "composite": false },
+      { "name": "admin", "description": "Administrador",      "composite": false }
+    ],
+    "client": {
+      "refugiohuellas": [
+        { "name": "user",  "description": "Usuario de RefugioHuellas" },
+        { "name": "admin", "description": "Admin de RefugioHuellas"   }
+      ],
+      "veci-herramientas": [
+        { "name": "user",  "description": "Usuario de Veci-Herramientas" },
+        { "name": "admin", "description": "Admin de Veci-Herramientas"   }
+      ]
+    }
+  },
+  "users": [
+    {
+      "username": "admin_test",
+      "email": "admin@test.com",
+      "firstName": "Admin",
+      "lastName": "Test",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "Admin1234!", "temporary": false }
+      ],
+      "realmRoles": ["admin", "user"],
+      "clientRoles": {
+        "refugiohuellas":    ["admin"],
+        "veci-herramientas": ["admin"]
+      }
+    },
+    {
+      "username": "user_test",
+      "email": "user@test.com",
+      "firstName": "Usuario",
+      "lastName": "Test",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "User1234!", "temporary": false }
+      ],
+      "realmRoles": ["user"],
+      "clientRoles": {
+        "refugiohuellas":    ["user"],
+        "veci-herramientas": ["user"]
+      }
+    }
+  ]
+}

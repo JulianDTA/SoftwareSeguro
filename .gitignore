@@ -1,0 +1,42 @@
+# ── .NET / ASP.NET ──────────────────────────────────────────
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.log
+*.db
+*.sqlite
+
+# ── Node / npm ───────────────────────────────────────────────
+node_modules/
+dist/
+.cache/
+.vite/
+
+# ── Build artifacts ──────────────────────────────────────────
+**/wwwroot/app/
+**/wwwroot/lib/
+
+# ── Secrets / env (nunca subir) ──────────────────────────────
+# .env   <-- los incluimos porque solo tienen URLs locales
+appsettings.Production.json
+secrets.json
+
+# ── Docker volumes / data ────────────────────────────────────
+docker/data/
+pgdata/
+
+# ── Logs y temporales del proyecto ───────────────────────────
+logs/
+pptx_qa/
+*.pdf
+
+# ── Archivos de OS ───────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE ──────────────────────────────────────────────────────
+.idea/
+*.swp

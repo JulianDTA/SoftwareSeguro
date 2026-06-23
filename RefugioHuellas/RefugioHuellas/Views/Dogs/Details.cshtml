@@ -1,0 +1,109 @@
+﻿@model RefugioHuellas.Models.Dog
+
+@{
+    ViewData["Title"] = "Detalle del perro";
+    bool isAdmin = User.IsInRole("Admin");
+    var ok = TempData["AdoptOk"] as string;
+    var info = TempData["Info"] as string;
+    int? compat = ViewBag.CompatScore as int?;
+}
+
+@if (!string.IsNullOrEmpty(ok))
+{
+    <div class="alert alert-success">@ok</div>
+}
+else if (!string.IsNullOrEmpty(info))
+{
+    <div class="alert alert-info">@info</div>
+}
+
+@if (User.Identity?.IsAuthenticated == true && compat.HasValue)
+{
+    <div class="alert alert-secondary">
+        Tu compatibilidad con <strong>@Model.Name</strong> es de <strong>@compat.Value%</strong>.
+    </div>
+}
+
+<div class="page-title">
+    <div>
+        <h1>@Model.Name</h1>
+        <p>Conoce más sobre este peludito antes de enviar tu solicitud de adopción.</p>
+    </div>
+</div>
+
+<div class="card card-section mb-4">
+    <div class="card-body">
+        <div class="row g-4">
+            <div class="col-md-4">
+                @if (!string.IsNullOrWhiteSpace(Model.PhotoUrl))
+                {
+                    <img src="@Model.PhotoUrl"
+                         alt="@Model.Name"
+                         class="img-fluid rounded border" />
+                }
+                else
+                {
+                    <div class="border rounded d-flex align-items-center justify-content-center"
+                         style="height:220px;">
+                        <span class="text-muted">Sin foto</span>
+                    </div>
+                }
+            </div>
+            <div class="col-md-8">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">Descripción</dt>
+                    <dd class="col-sm-9">@Model.Description</dd>
+
+                    <dt class="col-sm-3">Salud</dt>
+                    <dd class="col-sm-9">@Model.HealthStatus</dd>
+
+                    <dt class="col-sm-3">Esterilizado</dt>
+                    <dd class="col-sm-9">@(Model.Sterilized ? "Sí" : "No")</dd>
+
+                    <dt class="col-sm-3">Ingreso</dt>
+                    <dd class="col-sm-9">@Model.IntakeDate.ToLocalTime().ToString("g")</dd>
+
+                    <dt class="col-sm-3">Raza</dt>
+                    <dd class="col-sm-9">@Model.Breed</dd>
+
+                    <dt class="col-sm-3">Tamaño</dt>
+                    <dd class="col-sm-9">@Model.Size</dd>
+
+                    <dt class="col-sm-3">Entorno ideal</dt>
+                    <dd class="col-sm-9">@Model.IdealEnvironment</dd>
+
+                    <!-- 🔹 Origen -->
+                    <dt class="col-sm-3">Origen</dt>
+                    <dd class="col-sm-9">@Model.OriginType?.Name</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex flex-wrap gap-2">
+    <a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a>
+
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <a asp-controller="AdoptionApplications"
+           asp-action="Create"
+           asp-route-dogId="@Model.Id"
+           class="btn btn-success">
+            Adoptar
+        </a>
+    }
+    else
+    {
+        <a href="/Identity/Account/Login?returnUrl=@Uri.EscapeDataString($"/AdoptionApplications/Create?dogId={Model.Id}")"
+           class="btn btn-success">
+            Adoptar
+        </a>
+    }
+
+    @if (isAdmin)
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Eliminar</a>
+    }
+</div>

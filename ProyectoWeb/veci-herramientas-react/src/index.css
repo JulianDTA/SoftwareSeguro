@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-neo-bg text-black;
+  }
+}
+
+@layer components {
+  /* TARJETAS AGRESIVAS: Sin redondear, borde grueso */
+  .card-neo {
+    @apply bg-white border-4 border-black shadow-neo transition-all duration-200 rounded-none;
+  }
+  
+  .card-neo:hover {
+    @apply translate-x-[-4px] translate-y-[-4px] shadow-neo-hover bg-gray-50;
+  }
+
+  /* BOTONES AGRESIVOS */
+  .btn-neo {
+    @apply px-6 py-3 font-black text-sm uppercase tracking-wider border-4 border-black shadow-neo active:shadow-none active:translate-x-[6px] active:translate-y-[6px] transition-all rounded-none flex items-center justify-center gap-2;
+  }
+  
+  /* Inputs estilo "caja fuerte" */
+  .input-neo {
+    @apply w-full p-4 border-4 border-black rounded-none shadow-neo-sm focus:outline-none focus:shadow-neo transition-all bg-white font-bold;
+  }
+}
