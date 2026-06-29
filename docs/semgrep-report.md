@@ -8,20 +8,90 @@
 ```bash
 semgrep --config p/security-audit --config p/csharp \
         --config p/typescript --config p/owasp-top-ten \
-        --output semgrep-results.json --json \
-        RefugioHuellas/ ProyectoWeb/
+        --no-git-ignore --exclude node_modules --exclude bin --exclude obj \
+        --output semgrep-results.json --json .
+```
+
+**Resultado del escaneo real (374 archivos, 125 reglas, Semgrep OSS 1.168.0):**
+```
+Scan Status:
+  Language    Rules  Files
+  <multilang>     9    190
+  typescript     87     94
+  csharp         27     90
+  javascript     81     35
+  json            1     26
+  dockerfile      1      1
+
+Scan Summary:
+  ✅ Findings: 3 (3 blocking)
+  Rules run: 125  |  Targets scanned: 374
 ```
 
 ---
 
-## Resumen Ejecutivo
+## Hallazgos Reales de Semgrep (OSS)
 
-| Severidad | Cantidad | Estado |
-|-----------|----------|--------|
-| 🔴 HIGH   | 3        | Documentadas (mitigaciones propuestas) |
-| 🟡 MEDIUM | 4        | Documentadas |
-| 🟢 LOW    | 3        | Documentadas |
-| **Total** | **10**   | |
+### SEMGREP-001 — TLS Verification Bypass en TypeORM
+**Severidad**: WARNING (MEDIUM)  
+**Regla**: `problem-based-packs.insecure-transport.js-node.bypass-tls-verification`  
+**Archivo**: `ProyectoWeb/veci-herramientas-api/src/app.module.ts:39`  
+**CWE**: CWE-319 — Cleartext Transmission of Sensitive Information  
+**OWASP**: A03:2017 — Sensitive Data Exposure  
+
+**Código detectado:**
+```typescript
+ssl: isProd ? { rejectUnauthorized: false } : false
+```
+
+**Análisis**: En modo producción, `rejectUnauthorized: false` deshabilita la verificación del certificado SSL de la base de datos. Esto expone a ataques MitM sobre la conexión PostgreSQL.  
+**Evaluación**: En modo desarrollo (`isProd = false`), el SSL está desactivado para Docker local — **aceptable**. Para producción, se debería usar `rejectUnauthorized: true` o incluir el certificado de la CA.
+
+**Mitigación (producción):**
+```typescript
+ssl: isProd ? { rejectUnauthorized: true, ca: process.env.DB_SSL_CA } : false
+```
+
+---
+
+### SEMGREP-002 — Missing Authorization en AccountController
+**Severidad**: INFO (LOW)  
+**Regla**: `csharp.dotnet.security.audit.missing-or-broken-authorization`  
+**Archivo**: `RefugioHuellas/RefugioHuellas/Controllers/AccountController.cs:8`  
+**CWE**: CWE-862 — Missing Authorization  
+**OWASP**: A01:2021 — Broken Access Control  
+
+**Análisis**: El controlador `AccountController` no tiene `[Authorize]` ni `[AllowAnonymous]` explícito. Semgrep lo marca por precaución.  
+**Evaluación**: ✅ **Falso positivo en contexto** — `AccountController` maneja el flujo OIDC de Keycloak (redirect de login/logout). Debe ser accesible públicamente. La protección viene de que solo redirecciona a Keycloak, no expone datos.
+
+---
+
+### SEMGREP-003 — Missing Authorization en HomeController
+**Severidad**: INFO (LOW)  
+**Regla**: `csharp.dotnet.security.audit.missing-or-broken-authorization`  
+**Archivo**: `RefugioHuellas/RefugioHuellas/Controllers/HomeController.cs:7`  
+**CWE**: CWE-862 — Missing Authorization  
+**OWASP**: A01:2021 — Broken Access Control  
+
+**Análisis**: `HomeController` no tiene `[Authorize]` explícito.  
+**Evaluación**: ✅ **Falso positivo en contexto** — La página Home es pública por diseño (landing page del refugio). Las rutas protegidas (Dogs, AdoptionApplications) sí tienen `[Authorize]`.
+
+---
+
+## Resumen Ejecutivo (Combinado: Semgrep + Revisión Manual)
+
+| Origen | Severidad | Cantidad | Estado |
+|--------|-----------|----------|--------|
+| Semgrep OSS | WARNING | 1 | Ver SEMGREP-001 |
+| Semgrep OSS | INFO | 2 | Falsos positivos |
+| Revisión manual | 🔴 HIGH | 3 | Mitigaciones propuestas |
+| Revisión manual | 🟡 MEDIUM | 2 | Documentadas |
+| Revisión manual | 🟢 LOW | 2 | Documentadas |
+| **Total** | | **10** | |
+
+> **Nota**: Los hallazgos HIGH (secrets hardcodeados) no fueron capturados por Semgrep OSS porque las reglas de detección de secrets requieren Semgrep Pro. Se identificaron mediante revisión manual del código.
+
+---
 
 ---
 
