@@ -50,11 +50,11 @@ services:
       - IPC_LOCK
     command: server -dev
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://localhost:8200/v1/sys/health || exit 1"]
-      interval: 10s
+      test: ["CMD-SHELL", "vault status -address=http://127.0.0.1:8200 2>&1 | grep -c Initialized"]
+      interval: 5s
       timeout: 5s
-      retries: 5
-      start_period: 10s
+      retries: 10
+      start_period: 15s
 
   # ── Inicializa el Transit Engine en Vault (ejecuta una sola vez) ─────────────
   vault-init:
@@ -65,15 +65,17 @@ services:
       VAULT_TOKEN: "dev-only-token"
     entrypoint: >
       sh -c "
-        sleep 3 &&
+        until vault status -address=http://vault_kms:8200 2>/dev/null | grep -q Initialized; do
+          echo 'Esperando Vault...'; sleep 2;
+        done &&
         vault secrets enable transit || true &&
         vault write -f transit/keys/sso-comms type=aes256-gcm96 || true &&
-        echo '✓ Vault Transit engine habilitado con clave sso-comms'
+        echo 'Vault Transit engine habilitado con clave sso-comms'
       "
     depends_on:
       vault:
         condition: service_healthy
-    restart: on-failure:3
+    restart: on-failure:5
 
 volumes:
   veci_pgdata:
