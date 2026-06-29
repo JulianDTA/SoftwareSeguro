@@ -11,6 +11,8 @@ using RefugioHuellas.Data;
 using RefugioHuellas.Data.Repositories;
 using RefugioHuellas.Services.Compatibility;
 using RefugioHuellas.Services.Compatibility.Rules;
+using RefugioHuellas.Services.Integration;
+using RefugioHuellas.Services.Kms;
 using RefugioHuellas.Services.Storage;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -219,6 +221,12 @@ builder.Services.AddScoped<ITraitRule, ActivityLevelRule>();
 builder.Services.AddScoped<ITraitRuleFactory, TraitRuleFactory>();
 builder.Services.AddScoped<ICompatibilityService, CompatibilityService>();
 builder.Services.AddScoped<IPhotoStorage, LocalPhotoStorage>();
+
+// ── KMS (HashiCorp Vault) + Integración con Veci-Herramientas ────────────────
+builder.Services.AddHttpClient("vault");
+builder.Services.AddHttpClient("veci");
+builder.Services.AddScoped<IVaultService, VaultService>();
+builder.Services.AddScoped<IVeciIntegrationService, VeciIntegrationService>();
 
 var dpKeysPath = Environment.GetEnvironmentVariable("DPKEYS_PATH")
     ?? (builder.Environment.IsDevelopment()

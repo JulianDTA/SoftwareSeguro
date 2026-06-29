@@ -37,5 +37,43 @@ services:
       retries: 10
       start_period: 45s
 
+  # ── KMS: HashiCorp Vault (motor de cifrado Transit AES-256-GCM) ──────────────
+  vault:
+    image: hashicorp/vault:1.17
+    container_name: vault_kms
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: "dev-only-token"
+      VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
+    ports:
+      - "8200:8200"
+    cap_add:
+      - IPC_LOCK
+    command: server -dev
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8200/v1/sys/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ── Inicializa el Transit Engine en Vault (ejecuta una sola vez) ─────────────
+  vault-init:
+    image: hashicorp/vault:1.17
+    container_name: vault_init
+    environment:
+      VAULT_ADDR: "http://vault_kms:8200"
+      VAULT_TOKEN: "dev-only-token"
+    entrypoint: >
+      sh -c "
+        sleep 3 &&
+        vault secrets enable transit || true &&
+        vault write -f transit/keys/sso-comms type=aes256-gcm96 || true &&
+        echo '✓ Vault Transit engine habilitado con clave sso-comms'
+      "
+    depends_on:
+      vault:
+        condition: service_healthy
+    restart: on-failure:3
+
 volumes:
   veci_pgdata:

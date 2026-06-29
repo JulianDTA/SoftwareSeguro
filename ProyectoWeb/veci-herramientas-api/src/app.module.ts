@@ -11,6 +11,7 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { MessagesModule } from './messages/messages.module';
 import { FavoritesModule } from './favorites/favorites.module';
+import { SecureModule } from './secure/secure.module';
 
 @Module({
   imports: [
@@ -75,6 +76,7 @@ import { FavoritesModule } from './favorites/favorites.module';
     NotificationsModule,
     MessagesModule,
     FavoritesModule,
+    SecureModule,
   ],
   controllers: [AppController],
   providers: [AppService],
